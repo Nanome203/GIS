@@ -1,7 +1,7 @@
 import { useState } from "react";
 import background from "../assets/background-image.jpg";
-import LogInForm from "../atoms/LogInForm";
-import SignInForm from "../atoms/SignUpForm";
+import LogInForm from "../components/LogInForm";
+import SignInForm from "../components/SignUpForm";
 
 function Authentication() {
   const [isLogIn, setIsLogIn] = useState(true);
