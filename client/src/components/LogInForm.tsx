@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import supabase from "../utils/supabase";
 interface LoginData {
   email: string;
   password: string;
@@ -18,7 +19,6 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
   });
 
   function handleOnChangeInputText(e: Event) {
-    console.log(e.target.value === "");
     const newFormData = { ...formData, [e.target.id]: e.target.value };
     setFormData(newFormData);
   }
@@ -26,6 +26,21 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
   function handleOnChangeInputCheckBox(e: Event) {
     const newFormData = { ...formData, [e.target.id]: e.target.checked };
     setFormData(newFormData);
+  }
+
+  async function handleLogIn(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+    }
+    console.log(data);
+    console.log("test");
   }
 
   return (
@@ -89,6 +104,7 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
         <button
           className="w-96 rounded-full border-2 border-white bg-white py-2 text-xl font-bold hover:bg-opacity-20 hover:text-white active:bg-opacity-10"
           type="submit"
+          onClick={handleLogIn}
         >
           Log In
         </button>
