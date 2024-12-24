@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import supabase from "../utils/supabase";
+import { context } from "../utils/context";
 interface LoginData {
   email: string;
   password: string;
@@ -12,6 +13,11 @@ interface Props {
   setIsLogIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 function LogInForm({ isLogIn, setIsLogIn }: Props) {
+  const contextValue = useContext(context);
+  if (!contextValue) {
+    throw new Error("useContext must be inside a Provider with a value");
+  }
+  const { setIsLoggedIn } = contextValue;
   const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
@@ -30,16 +36,14 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
 
   async function handleLogIn(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
     if (error) {
       console.error(error);
-    } else {
-      console.log(data);
     }
-    console.log(data);
+    setIsLoggedIn(true);
     console.log("test");
   }
 
