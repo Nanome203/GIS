@@ -7,3 +7,22 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+/* CSS cho thanh cuộn mỏng và đẹp */
+.scrollbar-thin {
+  scrollbar-width: thin; /* Cho thanh cuộn mỏng trên Firefox */
+  scrollbar-color: #4b5563 #f3f4f6; /* Màu của thanh cuộn */
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px; /* Chiều rộng của thanh cuộn */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Màu nền của thanh cuộn */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* Màu của thanh cuộn */
+  border-radius: 9999px; /* Bo góc thanh cuộn */
+}
