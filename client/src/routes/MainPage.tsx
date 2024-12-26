@@ -4,8 +4,6 @@ import Header from "../components/Header";
 import { useContext, useEffect } from "react";
 import { context } from "../utils/context";
 
-// import MapView from "../components/MapView";
-
 function MainPage() {
   const navigate = useNavigate();
   const contextData = useContext(context);
@@ -23,12 +21,7 @@ function MainPage() {
       {session !== null ? (
         <div className="flex h-screen flex-col">
           <Header />
-          <div className="my-4"></div>
-
-          <div className="container mx-auto p-4">
-            <Outlet />
-          </div>
-          <div className="flex-1 overflow-hidden">{/* <MapView /> */}</div>
+          <Outlet />
           <Footer />
         </div>
       ) : (

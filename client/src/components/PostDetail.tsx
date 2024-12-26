@@ -26,10 +26,10 @@ interface PostDetailProps {
 
 const PostDetail: React.FC<PostDetailProps> = ({ post, onClose }) => {
   return (
-    <div className="absolute right-0 top-0 w-full lg:w-1/3 h-full bg-white shadow-lg z-10 overflow-auto scrollbar-thin">
+    <div className="scrollbar-thin absolute right-0 top-0 z-10 h-full w-1/3 overflow-auto bg-white shadow-lg animate-in slide-in-from-right">
       {/* Nút đóng */}
       <button
-        className="absolute top-4 right-4 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full"
+        className="absolute right-4 top-4 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
         onClick={onClose}
       >
         <FaTimes />
@@ -40,20 +40,20 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onClose }) => {
         <img
           src={post.image}
           alt={post.title}
-          className="w-full h-64 object-cover mb-6"
+          className="mb-6 h-64 w-full object-cover"
         />
-        <h2 className="text-2xl font-bold mb-4">{post.title}</h2>
-        <p className="text-gray-700 mb-4">{post.description}</p>
-        
+        <h2 className="mb-4 text-2xl font-bold">{post.title}</h2>
+        <p className="mb-4 text-gray-700">{post.description}</p>
+
         {/* Thêm chi tiết như diện tích, giá, tiện ích */}
         <div className="mb-4">
           <p className="text-lg font-semibold">Giá bán: {post.price}</p>
           <p className="text-lg font-semibold">Diện tích: {post.area}</p>
           <p className="text-lg font-semibold">Tiện ích: {post.amenities}</p>
         </div>
-        
+
         {/* Thông tin liên hệ */}
-        <div className="flex items-center space-x-4 mb-6">
+        <div className="mb-6 flex items-center space-x-4">
           <img
             src="https://i.pravatar.cc/40"
             alt="Avatar"
@@ -76,13 +76,13 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onClose }) => {
         <div className="flex space-x-4">
           <button
             onClick={() => alert(`Gọi cho ${post.contactPhone}`)}
-            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+            className="rounded-lg bg-green-500 px-4 py-2 text-white hover:bg-green-600"
           >
             Gọi
           </button>
           <button
             onClick={() => alert(`Gửi email cho ${post.contactName}`)}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+            className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           >
             Gửi email
           </button>
