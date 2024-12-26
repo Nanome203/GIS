@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { useContext, useEffect } from "react";
@@ -23,7 +23,8 @@ function MainPage() {
       {session !== null ? (
         <div className="flex h-screen flex-col">
           <Header />
-          <EditProfile />
+          <Outlet />
+          {/* <Profile /> */}
           <Footer />
         </div>
       ) : (
