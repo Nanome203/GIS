@@ -4,16 +4,6 @@ import logo from "../assets/logo.jfif";
 import supabase from "../utils/supabase";
 import { Link, useNavigate } from "react-router-dom";
 
-interface User {
-  name: string;
-  avatar: string;
-}
-
-const user: User = {
-  name: "Nguyễn Văn A",
-  avatar: "https://i.pravatar.cc/40",
-};
-
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false); // Trạng thái menu
   const navigate = useNavigate();
@@ -21,7 +11,6 @@ function Header() {
 
   const handleLogout = () => {
     supabase.auth.signOut();
-    alert("Đăng xuất thành công");
     navigate("/authentication");
   };
 
@@ -32,7 +21,7 @@ function Header() {
   // Đóng menu khi nhấn ngoài
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) { 
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
     }
@@ -69,46 +58,44 @@ function Header() {
           <input
             type="text"
             placeholder="Tìm kiếm đất bất động sản..."
-            className="h-10 w-80 rounded-full border border-gray-300 bg-white pl-10 pr text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-10 w-80 rounded-full border border-gray-300 bg-white pl-10 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-blue-500" />
         </div>
 
         <div
           className="relative flex cursor-pointer items-center space-x-4"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen((prev) => !prev)}
           ref={menuRef} // Gắn ref vào container menu
         >
           <img
-            src={user.avatar}
+            src="https://i.pravatar.cc/40"
             alt="Avatar"
-            className="h-8 w-8 rounded-full border-2 border-white"
+            className="aspect-square w-14 rounded-full border-2 border-white"
           />
-          <span className="text-sm font-bold">{user.name}</span>
+          {/* Dropdown menu */}
+          {menuOpen && (
+            <div
+              className="absolute right-0 top-16 w-48 rounded-lg bg-white shadow-lg"
+              ref={menuRef}
+            >
+              <ul className="text-gray-700">
+                <li
+                  onClick={goToProfile}
+                  className="flex cursor-pointer items-center rounded-lg px-4 py-2 hover:bg-gray-100"
+                >
+                  <FaUser className="mr-3 text-blue-500" /> Cá nhân
+                </li>
+                <li
+                  onClick={handleLogout}
+                  className="flex cursor-pointer items-center rounded-lg px-4 py-2 hover:bg-gray-100"
+                >
+                  <FaSignOutAlt className="mr-3 text-red-500" /> Đăng xuất
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-
-        {/* Dropdown menu */}
-        {menuOpen && (
-          <div
-            className="absolute right-0 top-12 w-48 rounded-lg bg-white shadow-lg"
-            ref={menuRef}
-          >
-            <ul className="text-gray-700">
-              <li
-                onClick={goToProfile}
-                className="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-100"
-              >
-                <FaUser className="mr-3 text-blue-500" /> Cá nhân
-              </li>
-              <li
-                onClick={handleLogout}
-                className="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-100"
-              >
-                <FaSignOutAlt className="mr-3 text-red-500" /> Đăng xuất
-              </li>
-            </ul>
-          </div>
-        )}
       </div>
     </header>
   );

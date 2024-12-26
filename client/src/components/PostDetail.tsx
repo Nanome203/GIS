@@ -23,7 +23,7 @@ import {
 //   amenities: string;
 //   coordinates: Coordinates;
 // }
-interface DatBanData {
+interface DatData {
   id: string;
   ownerId: string;
   title: string;
@@ -38,18 +38,63 @@ interface DatBanData {
   area: number;
   amenities: string;
 }
-
+type Coordinates = {
+  lat: number;
+  lng: number;
+};
 interface PostDetailProps {
-  post: DatBanData;
+  post: DatData;
   onClose: () => void;
+  start: Coordinates | null;
+  end: Coordinates | null;
+  mapRef: mapboxgl.Map | null;
 }
 
-function PostDetail({ post, onClose }: PostDetailProps) {
+function PostDetail({ post, onClose, start, end, mapRef }: PostDetailProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addRouteToMap = (route: any) => {
+    if (mapRef?.getLayer("route")) {
+      mapRef?.removeLayer("route");
+      mapRef?.removeSource("route");
+    }
+    mapRef?.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {},
+          geometry: { type: "LineString", coordinates: route },
+        },
+      },
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: { "line-color": "#3887be", "line-width": 5 },
+    });
+  };
+
+  const calculateRoute = (
+    start: Coordinates | null,
+    end: Coordinates | null,
+  ) => {
+    if (start === null) {
+      alert("Không thể tính nếu chưa biết vị trí người dùng");
+      return;
+    }
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start?.lng},${start?.lat};${end?.lng},${end?.lat}?geometries=geojson&access_token=pk.eyJ1IjoidGlob25kYW5neWV1MDEwMiIsImEiOiJjbTUxNjdobzkxdXY5MmtwdHMwN3YxcnozIn0.yIZMRN-2uvkr9vz92_45Ig`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        const route = data.routes[0].geometry.coordinates;
+        addRouteToMap(route);
+      })
+      .catch((error) => console.error("Error fetching directions:", error));
+  };
   return (
-    <div className="relative h-full w-1/3 overflow-auto bg-white p-6 shadow-lg animate-in slide-in-from-right">
+    <div className="relative h-full w-1/3 overflow-auto rounded-xl border-2 border-gray-200 bg-white p-6 shadow-xl animate-in slide-in-from-right">
       {/* Nút đóng */}
       <button
-        className="absolute right-4 top-4 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+        className="absolute right-1 top-1 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
         onClick={onClose}
       >
         <FaTimes />
@@ -109,10 +154,10 @@ function PostDetail({ post, onClose }: PostDetailProps) {
             Gọi
           </button>
           <button
-            // onClick={() => alert(`Gửi email cho ${post.contactName}`)}
+            onClick={() => calculateRoute(start, end)}
             className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           >
-            Gửi email
+            Tìm đường
           </button>
         </div>
       </div>

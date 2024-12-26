@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MapView from "../components/MapView";
 import PostDetail from "../components/PostDetail";
-import { FaSearch, FaHeart } from "react-icons/fa"; // Import FaHeart
+import { FaBookmark } from "react-icons/fa"; // Import FaHeart
 import supabase from "../utils/supabase";
 
 interface DatData {
@@ -24,6 +24,11 @@ function HouseForSale() {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null);
   const [fetchedData, setFetchedData] = useState<DatData[]>([]);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [mapRef, setMapRef] = useState<mapboxgl.Map | null>(null);
 
   const selectedPost = fetchedData.find((post) => post.id === selectedPostId);
   const coordinates =
@@ -90,8 +95,8 @@ function HouseForSale() {
               selectedPostId === post.id
                 ? "bg-blue-100"
                 : hoveredPostId === post.id
-                ? "bg-gray-100"
-                : "bg-white"
+                  ? "bg-gray-100"
+                  : "bg-white"
             }`}
           >
             <img
@@ -102,7 +107,7 @@ function HouseForSale() {
             <div className="p-4">
               <h2 className="mb-2 text-xl font-bold">{post.title}</h2>
               <p className="mb-4 text-gray-700">{post.description}</p>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-1">
                 <div className="flex items-center space-x-4">
                   <img
                     src="https://i.pravatar.cc/40"
@@ -110,13 +115,13 @@ function HouseForSale() {
                     className="h-10 w-10 rounded-full border-2 border-gray-300"
                   />
                   <div>
-                    <p className="font-semibold">{post.contactName}</p>
+                    <p className="text-sm font-semibold">{post.contactName}</p>
                     <p className="text-sm text-gray-500">SĐT: {post.phone}</p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
                   {/* Nút Tìm kiếm */}
-                  <button
+                  {/* <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handlePostClick(post.id);
@@ -124,7 +129,7 @@ function HouseForSale() {
                     className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
                   >
                     <FaSearch className="text-xl" />
-                  </button>
+                  </button> */}
                   {/* Nút Lưu */}
                   <button
                     onClick={(e) => {
@@ -133,7 +138,8 @@ function HouseForSale() {
                     }}
                     className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
                   >
-                    <FaHeart className="text-xl" /> {/* Đổi thành trái tim */}
+                    <FaBookmark className="text-xl" />{" "}
+                    {/* Đổi thành trái tim */}
                   </button>
                 </div>
               </div>
@@ -142,11 +148,18 @@ function HouseForSale() {
         ))}
       </div>
       {/* Mapbox */}
-      <MapView selectedCoordinates={coordinates} />
+      <MapView
+        selectedCoordinates={coordinates}
+        setUserLocation={setUserLocation}
+        setMapRef={setMapRef}
+      />
       {selectedPost && (
         <PostDetail
           post={selectedPost}
           onClose={() => setSelectedPostId(null)}
+          start={userLocation}
+          end={coordinates}
+          mapRef={mapRef}
         />
       )}
     </div>

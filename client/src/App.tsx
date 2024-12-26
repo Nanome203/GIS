@@ -13,16 +13,13 @@ import Directory from "./page/Directory";
 import ResetPassword from "./components/ResetPassword";
 import ChangePassword from "./components/ChangePassword";
 import Profile from "./components/Profile";
-import EditProfile from "./components/EditProfile";
 import SavedPosts from "./components/SavedPosts";
 // import Profile from "./components/Profile";
-
 
 function App() {
   const [session, setSession] = useState<Session | null>(
     JSON.parse(localStorage.getItem("session") || "null"),
   );
-  console.log(session);
 
   useEffect(() => {
     //refresh tokens
@@ -75,14 +72,9 @@ function App() {
           <Route path="/home" element={<MainPage />}>
             <Route index element={<HouseForSale />} />
             <Route path="house-for-rent" element={<HouseForRent />} />
-
             <Route path="directory" element={<Directory />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="edit-profile" element={<EditProfile />} />
-            <Route path="saved-posts" element={<SavedPosts />} />
-
-
-
+            <Route path="profile/saved-posts" element={<SavedPosts />} />
           </Route>
         </Routes>
       </BrowserRouter>

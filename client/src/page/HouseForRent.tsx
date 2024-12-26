@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import MapView from "../components/MapView";
 // import { FaSearch } from "react-icons/fa";
 import PostDetail from "../components/PostDetail";
-import { FaSearch } from "react-icons/fa";
 import supabase from "../utils/supabase";
 
 interface DatData {
@@ -26,6 +25,11 @@ function HouseForRent() {
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null);
   const [fetchedData, setFetchedData] = useState<DatData[]>([]);
   const selectedPost = fetchedData.find((post) => post.id === selectedPostId);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [mapRef, setMapRef] = useState<mapboxgl.Map | null>(null);
   const coordinates =
     selectedPost?.lat && selectedPost?.lng
       ? { lat: selectedPost.lat, lng: selectedPost.lng }
@@ -86,7 +90,7 @@ function HouseForRent() {
             <div className="p-4">
               <h2 className="mb-2 text-xl font-bold">{post.title}</h2>
               <p className="mb-4 text-gray-700">{post.description}</p>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-1">
                 <div className="flex items-center space-x-4">
                   <img
                     src="https://i.pravatar.cc/40"
@@ -94,11 +98,11 @@ function HouseForRent() {
                     className="h-10 w-10 rounded-full border-2 border-gray-300"
                   />
                   <div>
-                    <p className="font-semibold">{post.contactName}</p>
+                    <p className="text-sm font-semibold">{post.contactName}</p>
                     <p className="text-sm text-gray-500">SĐT: {post.phone}</p>
                   </div>
                 </div>
-                <button
+                {/* <button
                   onClick={(e) => {
                     e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
                     handlePostClick(post.id);
@@ -106,18 +110,25 @@ function HouseForRent() {
                   className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
                 >
                   <FaSearch className="text-xl" />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
         ))}
       </div>
       {/* Mapbox (chiếm 3/4) */}
-      <MapView selectedCoordinates={coordinates} />
+      <MapView
+        selectedCoordinates={coordinates}
+        setUserLocation={setUserLocation}
+        setMapRef={setMapRef}
+      />
       {selectedPost && (
         <PostDetail
           post={selectedPost}
           onClose={() => setSelectedPostId(null)}
+          start={userLocation}
+          end={coordinates}
+          mapRef={mapRef}
         />
       )}
     </div>
