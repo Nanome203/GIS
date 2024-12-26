@@ -2,12 +2,32 @@ import React, { useState } from "react";
 import MapView from "../components/MapView";
 // import { FaSearch } from "react-icons/fa";
 import PostDetail from "../components/PostDetail";
+// import PostDetail from "../components/PostDetail";
 
-const posts = [
-  {
-    id: 1,
-      title: "ĐẤT MẶT TIỀN QUẬN 1, TP.HCM",
-      description: "Đất thương mại dịch vụ, đã có sổ, vị trí mặt tiền, ngay trung tâm.",
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  contactName: string;
+  contactPhone: string;
+  price: string;
+  area: string;
+  amenities: string;
+  coordinates: Coordinates;
+}
+
+const HouseForSale = () => {
+  const posts: Post[] = [
+    {
+      id: 1,
+      title: "Nhà đất bán tại Quận 1, TP.HCM",
+      description: "Căn nhà đẹp, vị trí thuận lợi, giá rẻ.",
       image:
         "https://xaydunganthienphat.com.vn/upload/filemanager/mau%20nha/nha%20mai%20thai%202%20tang/nha-mai-thai-2-tang-14.jpg",
       contactName: "Nguyễn Văn An",
@@ -116,89 +136,83 @@ function HouseForSale() {
     : null;
 
   return (
-    <div className="w-full h-screen flex flex-col" >
-      {/* Nội dung chính */}
-      <div className="pt-[64px] h-full flex">
-        {/* Sidebar bài Post */}
-        <div className="w-1/4 bg-gray-100 overflow-auto scrollbar-thin max-h-[calc(100vh-64px)]">
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              onMouseEnter={() => setHoveredPostId(post.id)}
-              onMouseLeave={() => setHoveredPostId(null)}
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePostClick(post.id);
-              }}
-              className={`post-item mb-4 border-b last:border-none pb-4 cursor-pointer transition ${
-                selectedPostId === post.id
-                  ? "bg-blue-100"
-                  : hoveredPostId === post.id
-                  ? "bg-gray-100"
-                  : "bg-white"
-              }`}
-            >
-              <div className = "relative w-full h-40 overflow-hidden">
-              <img 
-                src={post.image}
-                alt={post.title}
-                className="w-full h-36 object-cover"
-              />
-              </div>
-              <div className="p-4">
-                <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-                <p className="text-sm  text-gray-700 mb-4 ">{post.description}</p>
-                
-
-                {/* Sđt, tên người dùng */}
+    <div
+      className="relative flex h-full w-full gap-2 p-4"
+      onClick={handleContainerClick}
+    >
+      {/* Bài đăng (1/4) */}
+      <div className="scrollbar-thin basis-1/3 overflow-y-scroll px-10">
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            onMouseEnter={() => setHoveredPostId(post.id)} // Đánh dấu khi hover
+            onMouseLeave={() => setHoveredPostId(null)} // Xóa hover khi rời chuột
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn chặn sự kiện click lan ra container
+              handlePostClick(post.id, post.coordinates);
+            }}
+            className={`post-item mb-4 cursor-pointer border-b pb-4 transition last:border-none ${
+              selectedPostId === post.id
+                ? "bg-blue-100" // Màu khi được chọn
+                : hoveredPostId === post.id
+                  ? "bg-gray-100" // Màu khi hover
+                  : "bg-white" // Màu mặc định
+            }`}
+          >
+            <img
+              src={post.image}
+              alt={post.title}
+              className="h-48 w-full object-cover"
+            />
+            <div className="p-4">
+              <h2 className="mb-2 text-xl font-bold">{post.title}</h2>
+              <p className="mb-4 text-gray-700">{post.description}</p>
+              <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                <img
+                  <img
                     src="https://i.pravatar.cc/40"
                     alt="Avatar"
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full border-2 border-gray-300"
                   />
                   <div>
-                    <p className="text-sm text-gray-600">
-                      {post.contactName}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {post.contactPhone}
+                    <p className="font-semibold">{post.contactName}</p>
+                    <p className="text-sm text-gray-500">
+                      SĐT: {post.contactPhone}
                     </p>
                   </div>
-                  
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                    handlePostClick(post.id, post.coordinates);
+                  }}
+                  className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
+                >
+                  <FaSearch className="text-xl" />
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Mapbox */}
-        <div className="flex-grow bg-gray-200 flex items-center justify-center max-h-[calc(100vh-64px)] relative z-0">
-          <MapView
-            selectedCoordinates={
-              selectedPostId
-                ? posts.find((post) => post.id === selectedPostId)?.coordinates || null
-                : null
-            }
-          />
-        </div>
+          </div>
+        ))}
       </div>
-
-      {/* Post Detail */}
-      <section
-  className={`fixed top-[90px] bottom-0 right-0 w-1/3 bg-white shadow-lg transform transition-transform duration-500 ${
-    selectedPostId ? "translate-x-0" : "translate-x-full"
-  }`}
-
->
-  {selectedPost && (
-    <PostDetail 
-    post={selectedPost} 
-    onClose={handleClosePostDetail} />
-  )}
-</section>
+      {/* Mapbox (chiếm 3/4) */}
+      <MapView
+        selectedCoordinates={
+          selectedPostId
+            ? posts.find((post) => post.id === selectedPostId)?.coordinates ||
+              null
+            : null
+        }
+      />
+      {/* </div> */}
+      {selectedPost && (
+        <PostDetail
+          post={selectedPost}
+          onClose={() => setSelectedPostId(null)}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default HouseForSale;

@@ -2,7 +2,7 @@
 import { FaSearch } from "react-icons/fa";
 import logo from "../assets/logo.jfif";
 import supabase from "../utils/supabase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import { Link } from "react-router-dom";
 
 
@@ -25,7 +25,7 @@ function Header() {
   // };
 
   return (
-    <header className="fixed left-0 top-0 z-10 flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
+    <header className="sticky top-0 z-[100] flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
       <div className="flex items-center space-x-6">
         <img
           src={logo}
@@ -33,18 +33,18 @@ function Header() {
           className="aspect-square w-16 rounded-full object-fill"
         />
         <nav className="flex space-x-6">
-          <a href="/" className="font-bold hover:text-gray-400">
+          <Link to="/home" className="font-bold hover:text-gray-400">
             Đất bán
-          </a>
-          <a href="/house-for-rent" className="font-bold hover:text-gray-400">
+          </Link>
+          <Link to="house-for-rent" className="font-bold hover:text-gray-400">
             Đất cho thuê
-          </a>
-          {/* <a href="/analysis" className="font-bold hover:text-gray-400">
+          </Link>
+          <Link to="analysis" className="font-bold hover:text-gray-400">
             Phân tích đánh giá
-          </a> */}
-          <a href="/directory" className="font-bold hover:text-gray-400">
+          </Link>
+          <Link to="directory" className="font-bold hover:text-gray-400">
             Danh bạ
-          </a>
+          </Link>
         </nav>
       </div>
 
@@ -80,9 +80,10 @@ function Header() {
         </button> */}
 
         <div
-          className="flex items-center space-x-4"
+          className="flex cursor-pointer items-center space-x-4"
           onClick={() => {
             supabase.auth.signOut();
+            alert("Đăng xuất thành công");
             navigate("/authentication");
           }}
         >
