@@ -1,123 +1,127 @@
+import React, { useEffect, useState } from "react";
+import MapView from "../components/MapView";
+// import { FaSearch } from "react-icons/fa";
+import PostDetail from "../components/PostDetail";
+import { FaSearch } from "react-icons/fa";
+import supabase from "../utils/supabase";
 
-import  { useState, useEffect } from 'react';
+interface DatData {
+  id: string;
+  ownerId: string;
+  title: string;
+  imageUrl: string;
+  address: string;
+  price: number;
+  phone: string;
+  lat: number;
+  lng: number;
+  description: string;
+  contactName: string;
+  area: number;
+  amenities: string;
+}
 
-const HouseForRent = () => {
-  const [showScrollTopButton, setShowScrollTopButton] = useState(false);
-  const posts = [
-    {
-      id: 1,
-      title: 'Nhà đất cho thuê tại Quận 1, TP.HCM',
-      description: 'Căn nhà đẹp, vị trí thuận lợi, giá rẻ.',
-      image: 'https://xaydunganthienphat.com.vn/upload/filemanager/mau%20nha/nha%20mai%20thai%202%20tang/nha-mai-thai-2-tang-14.jpg',
-      contactName: 'Nguyễn Văn A',
-      contactPhone: '0123456789',
-    },
-    {
-      id: 2,
-      title: 'Nhà đất cho thuê tại Quận 3, TP.HCM',
-      description: 'Căn nhà rộng rãi, gần chợ và trường học.',
-      image: 'https://images.unsplash.com/photo-1511918984144-b8a32fd5d570',
-      contactName: 'Trần Thị B',
-      contactPhone: '0987654321',
-    },
-    {
-      id: 3,
-      title: 'Nhà đất cho thuê tại Quận 7, TP.HCM',
-      description: 'Nhà mới xây, không gian sống thoải mái.',
-      image: 'https://images.unsplash.com/photo-1570744542181-cb95d0f63a1b',
-      contactName: 'Lê Văn C',
-      contactPhone: '0912345678',
-    },
-    {
-      id: 4,
-      title: 'Nhà đất cho thuê tại Quận 10, TP.HCM',
-      description: 'Nhà nằm gần các tiện ích công cộng.',
-      image: 'https://images.unsplash.com/photo-1511918984144-b8a32fd5d570',
-      contactName: 'Phan Thị D',
-      contactPhone: '0934567890',
-    },
-    {
-      id: 5,
-      title: 'Nhà đất cho thuê tại Quận 4, TP.HCM',
-      description: 'Vị trí giao thông thuận lợi, giá hợp lý.',
-      image: 'https://images.unsplash.com/photo-1570744542181-cb95d0f63a1b',
-      contactName: 'Võ Minh E',
-      contactPhone: '0986123456',
-    },
-  ];
+function HouseForRent() {
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [hoveredPostId, setHoveredPostId] = useState<string | null>(null);
+  const [fetchedData, setFetchedData] = useState<DatData[]>([]);
+  const selectedPost = fetchedData.find((post) => post.id === selectedPostId);
+  const coordinates =
+    selectedPost?.lat && selectedPost?.lng
+      ? { lat: selectedPost.lat, lng: selectedPost.lng }
+      : null;
+  function handlePostClick(postId: string) {
+    setSelectedPostId(postId);
+  }
 
+  // function handleClosePostDetail() {
+  //   setSelectedPostId(null); // Đóng detail
+  // }
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
- 
-  const handleScroll = () => {
-    if (window.scrollY > 300) {  
-      setShowScrollTopButton(true);
-    } else {
-      setShowScrollTopButton(false);
-    }
-  };
-
+  // const selectedPost = selectedPostId
+  //   ? fetchedData.find((post) => post.id === selectedPostId)
+  //   : null;
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    async function fetchData() {
+      const { data, error } = await supabase.from("dat_thue").select("*");
+      if (error) {
+        console.log("error", error);
+      } else {
+        setFetchedData(data);
+      }
+    }
+    fetchData();
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="space-y-8">
-
-        {posts.map((post) => (
+    <div
+      className="relative flex h-full w-full gap-2 p-4"
+      // onClick={handleClosePostDetail}
+    >
+      {/* Bài đăng (1/4) */}
+      <div className="scrollbar-thin basis-1/3 overflow-y-scroll px-10">
+        {fetchedData.map((post) => (
           <div
             key={post.id}
-            className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden"
+            onMouseEnter={() => setHoveredPostId(post.id)} // Đánh dấu khi hover
+            onMouseLeave={() => setHoveredPostId(null)} // Xóa hover khi rời chuột
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn chặn sự kiện click lan ra container
+              handlePostClick(post.id);
+            }}
+            className={`post-item mb-4 cursor-pointer border-b pb-4 transition last:border-none ${
+              selectedPostId === post.id
+                ? "bg-blue-100" // Màu khi được chọn
+                : hoveredPostId === post.id
+                  ? "bg-gray-100" // Màu khi hover
+                  : "bg-white" // Màu mặc định
+            }`}
           >
-
             <img
-              src={post.image}
+              src={post.imageUrl}
               alt={post.title}
-              className="w-full h-auto object-cover"
+              className="h-48 w-full object-cover"
             />
-
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-4">{post.title}</h2>
-              <p className="text-gray-700 mb-4">{post.description}</p>
-
-              <div className="flex items-center space-x-4">
-
-                <img
-                  src="https://i.pravatar.cc/40"
-                  alt="Avatar"
-                  className="h-10 w-10 rounded-full border-2 border-gray-300"
-                />
-                <div>
-                  <p className="font-semibold">{post.contactName}</p>
-                  <p className="text-sm text-gray-500">SĐT: {post.contactPhone}</p>
+            <div className="p-4">
+              <h2 className="mb-2 text-xl font-bold">{post.title}</h2>
+              <p className="mb-4 text-gray-700">{post.description}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src="https://i.pravatar.cc/40"
+                    alt="Avatar"
+                    className="h-10 w-10 rounded-full border-2 border-gray-300"
+                  />
+                  <div>
+                    <p className="font-semibold">{post.contactName}</p>
+                    <p className="text-sm text-gray-500">SĐT: {post.phone}</p>
+                  </div>
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                    handlePostClick(post.id);
+                  }}
+                  className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
+                >
+                  <FaSearch className="text-xl" />
+                </button>
               </div>
             </div>
           </div>
         ))}
-        {showScrollTopButton && (
-          <button
-            onClick={scrollToTop}
-            className="fixed bottom-10 right-10 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
-          >
-            ↑
-          </button>
-        )}
       </div>
+      {/* Mapbox (chiếm 3/4) */}
+      <MapView selectedCoordinates={coordinates} />
+      {selectedPost && (
+        <PostDetail
+          post={selectedPost}
+          onClose={() => setSelectedPostId(null)}
+        />
+      )}
     </div>
   );
-};
+}
 
 export default HouseForRent;
