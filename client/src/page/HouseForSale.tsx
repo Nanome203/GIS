@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MapView from "../components/MapView";
 // import { FaSearch } from "react-icons/fa";
 import PostDetail from "../components/PostDetail";
+import { FaSearch } from "react-icons/fa";
 // import PostDetail from "../components/PostDetail";
 
 interface Coordinates {
@@ -18,11 +19,11 @@ interface Post {
   contactPhone: string;
   price: string;
   area: string;
-  amenities: string;
+  address: string;
   coordinates: Coordinates;
 }
 
-const HouseForSale = () => {
+
   const posts: Post[] = [
     {
       id: 1,
@@ -35,85 +36,85 @@ const HouseForSale = () => {
       coordinates: { lat: 10.7769, lng: 106.7009 }, 
       price: "1 tỷ",
       area: "50m²",
-      amenities: "Gần chợ, trường học, các cửa hàng tiện lợi"
+      address: "Quận 1"
   },
   {
     id: 2,
     title: "Nhà đất bán tại Quận 3, TP.HCM",
     description: "Căn nhà rộng rãi, gần chợ và trường học.",
     image:
-      "https://xaydunganthienphat.com.vn/upload/filemanager/mau%20nha/nha%20mai%20thai%202%20tang/nha-mai-thai-2-tang-14.jpg",
+      "https://cdnphoto.dantri.com.vn/dT-CccEOs0x8B90TByu-Kpzpwa8=/2021/04/28/buudientp-1619582767777.jpg",
     contactName: "Nhà đất Trần Văn",
     contactPhone: "0987654321",
     coordinates: { lat: 10.7791, lng: 106.6847 },
     price: "2 tỷ",
     area: "70m²",
-    amenities: "Gần chợ, trường học",
+    address: "Quận 3",
   },
   {
     id: 3,
     title: "Nhà đất bán tại Bình Thạnh, TP.HCM",
     description: "Căn hộ gần trung tâm, view sông thoáng mát.",
     image:
-      "https://xaydunganthienphat.com.vn/upload/filemanager/mau%20nha/nha%20mai%20thai%202%20tang/nha-mai-thai-2-tang-14.jpg",
+      "https://cdn.tgdd.vn/Files/2023/03/03/1514450/nhung-dia-diem-vui-choi-quan-binh-thanh-nhat-dinh-phai-den-202303030822293369.jpg",
     contactName: "Lê Minh Cường",
     contactPhone: "0988112233",
     coordinates: { lat: 10.8039, lng: 106.7074 },
     price: "3.5 tỷ",
     area: "120m²",
-    amenities: "Gần sông, khu dân cư yên tĩnh",
+    address: "Bình Thạnh",
   },
   {
     id: 4,
     title: "Đất nền Khu đô thị mới tại Quận 9, TP.HCM",
     description: "Khu đất nền đẹp, hạ tầng hoàn thiện.",
     image:
-      "https://xaydunganthienphat.com.vn/upload/filemanager/mau%20nha/nha%20mai%20thai%202%20tang/nha-mai-thai-2-tang-14.jpg",
+      "https://vnn-imgs-f.vgcloud.vn/2019/10/14/15/vi-sao-quan-9-tro-thanh-khong-gian-song-ly-tuong-cua-gioi-thanh-dat.jpg",
     contactName: "Phạm Thu Hà",
     contactPhone: "0934567890",
     coordinates: { lat: 10.8458, lng: 106.7857 },
     price: "900 triệu",
     area: "100m²",
-    amenities: "Gần khu công nghệ cao, đường lớn",
+    address: "Quận 9",
   },
   {
     id: 5,
     title: "Biệt thự ven biển tại Vũng Tàu",
     description: "Biệt thự đẳng cấp, gần biển, thích hợp nghỉ dưỡng.",
     image:
-      "https://kientrucsuvietnam.vn/wp-content/uploads/2020/03/mau-biet-thu-nghi-duong-ven-bien-5.jpg",
+      "https://mia.vn/media/uploads/blog-du-lich/co-gi-o-nha-up-nguoc-vung-tau-ma-lai-thu-hut-gioi-tre-den-the-1-1634060200.jpg",
     contactName: "Nguyễn Hải Dương",
     contactPhone: "0909123456",
     coordinates: { lat: 10.3451, lng: 107.0843 },
     price: "12 tỷ",
     area: "300m²",
-    amenities: "Gần biển, có hồ bơi, an ninh cao",
+    address: "Vũng tàu",
   },
   {
     id: 6,
     title: "Nhà phố tại Quận 7, TP.HCM",
     description: "Nhà phố tiện nghi, gần trung tâm thương mại.",
     image:
-      "https://kientrucsuvietnam.vn/wp-content/uploads/2018/06/thiet-ke-nha-pho-mat-tien-6m-600x450.jpg",
+      "https://image.plo.vn/w1000/Uploaded/2024/bpcbzqvp/2021_12_01/biet-thu-hinh-thang-nguoc-2_wzqa.jpg.webp",
     contactName: "Hoàng Thị Mai",
     contactPhone: "0912123456",
     coordinates: { lat: 10.7386, lng: 106.7079 },
     price: "5 tỷ",
     area: "90m²",
-    amenities: "Gần siêu thị, bệnh viện, trường học",
+    address: "Quận 7",
   },
   {
     id: 7,
     title: "Đất thổ cư tại Thủ Đức, TP.HCM",
     description: "Đất thổ cư vị trí đẹp, pháp lý rõ ràng.",
     image:
-      "https://cdn.batdongsan.com.vn/crop/180x135/20211212083750-863d_wm.jpg",
+      "https://xaydungankhang.com/img_data/images/1(6).jpg",
     contactName: "Trần Quốc Huy",
     contactPhone: "0919988777",
     coordinates: { lat: 10.8500, lng: 106.7700 },
     price: "1.8 tỷ",
     area: "80m²",
-    amenities: "Gần trường đại học, giao thông thuận tiện",
+    address: "Thủ Đức",
   },
   
 ];
@@ -127,9 +128,9 @@ function HouseForSale() {
     setSelectedPostId(postId);
   }
 
-  function handleClosePostDetail() {
-    setSelectedPostId(null); // Đóng detail
-  }
+  // function handleClosePostDetail() {
+  //   setSelectedPostId(null); // Đóng detail
+  // }
 
   const selectedPost = selectedPostId
     ? posts.find((post) => post.id === selectedPostId)
@@ -138,7 +139,7 @@ function HouseForSale() {
   return (
     <div
       className="relative flex h-full w-full gap-2 p-4"
-      onClick={handleContainerClick}
+      // onClick={handlePostClick}
     >
       {/* Bài đăng (1/4) */}
       <div className="scrollbar-thin basis-1/3 overflow-y-scroll px-10">
@@ -149,7 +150,7 @@ function HouseForSale() {
             onMouseLeave={() => setHoveredPostId(null)} // Xóa hover khi rời chuột
             onClick={(e) => {
               e.stopPropagation(); // Ngăn chặn sự kiện click lan ra container
-              handlePostClick(post.id, post.coordinates);
+              handlePostClick(post.id);
             }}
             className={`post-item mb-4 cursor-pointer border-b pb-4 transition last:border-none ${
               selectedPostId === post.id
@@ -184,7 +185,7 @@ function HouseForSale() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
-                    handlePostClick(post.id, post.coordinates);
+                    handlePostClick(post.id);
                   }}
                   className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
                 >
@@ -215,4 +216,4 @@ function HouseForSale() {
   );
 };
 
-export default HouseForSale;
+export default HouseForSale

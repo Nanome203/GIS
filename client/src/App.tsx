@@ -12,6 +12,8 @@ import HouseForRent from "./page/HouseForRent";
 import Directory from "./page/Directory";
 import ResetPassword from "./components/ResetPassword";
 import ChangePassword from "./components/ChangePassword";
+// import Profile from "./components/Profile";
+
 
 function App() {
   const [session, setSession] = useState<Session | null>(
@@ -70,8 +72,10 @@ function App() {
           <Route path="/home" element={<MainPage />}>
             <Route index element={<HouseForSale />} />
             <Route path="house-for-rent" element={<HouseForRent />} />
-            {/* <Route path="/analysis" element={<Analysis />} /> */}
+
             <Route path="directory" element={<Directory />} />
+            {/* <Route path="profile" element={<Profile />} /> */}
+
           </Route>
         </Routes>
       </BrowserRouter>

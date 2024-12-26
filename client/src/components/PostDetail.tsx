@@ -15,7 +15,7 @@ interface Post {
   contactPhone: string;
   price: string;
   area: string;
-  amenities: string;
+  address: string;
   coordinates: Coordinates;
 }
 
@@ -46,20 +46,19 @@ function PostDetail({ post, onClose }: PostDetailProps) {
         <p className="mb-4 text-gray-700">{post.description}</p>
 
         {/* Thêm chi tiết như diện tích, giá, tiện ích */}
-        <div className="mb-4">
-          <p className="text-lg font-semibold">Giá bán: {post.price}</p>
-          <p className="text-lg font-semibold">Diện tích: {post.area}</p>
-          <p className="text-lg font-semibold">Tiện ích: {post.amenities}</p>
-        </div>
-        
+
+        <div className = "flex items-center space-x-2 mb-2">
+          <FaDollarSign className="text-gray-600" />
+          <p className="text-lg font-semibold">Giá bán:  {post.price}</p>
+          </div>
         <div className="flex items-center space-x-2 mb-2">
           <FaBed className="text-gray-600" />
-          <p><strong>Diện tích: </strong>{post.area}</p>
+          <p className="text-lg font-semibold">Diện tích: {post.area}</p>
         </div>
 
         <div className="flex items-center space-x-2 mb-2">
           <FaMapMarkerAlt className="text-gray-600" />
-          <p><strong>Tiện ích: </strong>{post.amenities}</p>
+          <p className="text-lg font-semibold">Địa chỉ: {post.address}</p>
         </div>
 
         <div className="flex items-center space-x-4">

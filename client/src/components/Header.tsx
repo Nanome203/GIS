@@ -1,10 +1,8 @@
-
-import { FaSearch } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from "react";
+import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
 import logo from "../assets/logo.jfif";
 import supabase from "../utils/supabase";
 import { Link, useNavigate } from "react-router-dom";
-// import { Link } from "react-router-dom";
-
 
 interface User {
   name: string;
@@ -17,12 +15,33 @@ const user: User = {
 };
 
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false); // Trạng thái menu
   const navigate = useNavigate();
-  // const [isLiked, setIsLiked] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null); // Ref để tham chiếu menu
 
-  // const toggleLike = () => {
-  //   setIsLiked(!isLiked);
-  // };
+  const handleLogout = () => {
+    supabase.auth.signOut();
+    alert("Đăng xuất thành công");
+    navigate("/authentication");
+  };
+
+  const goToProfile = () => {
+    navigate("/profile");
+  };
+
+  // Đóng menu khi nhấn ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) { 
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-[100] flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
@@ -39,53 +58,26 @@ function Header() {
           <Link to="house-for-rent" className="font-bold hover:text-gray-400">
             Đất cho thuê
           </Link>
-          <Link to="analysis" className="font-bold hover:text-gray-400">
-            Phân tích đánh giá
-          </Link>
           <Link to="directory" className="font-bold hover:text-gray-400">
             Danh bạ
           </Link>
         </nav>
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="relative flex items-center space-x-2">
         <div className="relative">
           <input
             type="text"
             placeholder="Tìm kiếm đất bất động sản..."
             className="h-10 w-80 rounded-full border border-gray-300 bg-white pl-10 pr text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {/* Icon tìm kiếm */}
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-blue-500" />
         </div>
 
-        {/* <button
-          onClick={toggleLike}
-          className="rounded-full p-2 hover:bg-gray-400"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill={isLiked ? "red" : "none"}
-            stroke={isLiked ? "red" : "currentColor"}
-            viewBox="0 0 24 24"
-            className="h-6 w-6"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button> */}
-
         <div
-          className="flex cursor-pointer items-center space-x-4"
-          onClick={() => {
-            supabase.auth.signOut();
-            alert("Đăng xuất thành công");
-            navigate("/authentication");
-          }}
+          className="relative flex cursor-pointer items-center space-x-4"
+          onClick={() => setMenuOpen(!menuOpen)}
+          ref={menuRef} // Gắn ref vào container menu
         >
           <img
             src={user.avatar}
@@ -94,6 +86,29 @@ function Header() {
           />
           <span className="text-sm font-bold">{user.name}</span>
         </div>
+
+        {/* Dropdown menu */}
+        {menuOpen && (
+          <div
+            className="absolute right-0 top-12 w-48 rounded-lg bg-white shadow-lg"
+            ref={menuRef}
+          >
+            <ul className="text-gray-700">
+              <li
+                onClick={goToProfile}
+                className="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-100"
+              >
+                <FaUser className="mr-3 text-blue-500" /> Cá nhân
+              </li>
+              <li
+                onClick={handleLogout}
+                className="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-100"
+              >
+                <FaSignOutAlt className="mr-3 text-red-500" /> Đăng xuất
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </header>
   );
