@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+
 import { FaSearch } from "react-icons/fa";
 import logo from "../assets/logo.jfif";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
 // import { Link } from "react-router-dom";
+
 
 interface User {
   name: string;
@@ -17,11 +18,11 @@ const user: User = {
 
 function Header() {
   const navigate = useNavigate();
-  const [isLiked, setIsLiked] = useState(false);
+  // const [isLiked, setIsLiked] = useState(false);
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
+  // const toggleLike = () => {
+  //   setIsLiked(!isLiked);
+  // };
 
   return (
     <header className="fixed left-0 top-0 z-10 flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
@@ -38,9 +39,9 @@ function Header() {
           <a href="/house-for-rent" className="font-bold hover:text-gray-400">
             Đất cho thuê
           </a>
-          <a href="/analysis" className="font-bold hover:text-gray-400">
+          {/* <a href="/analysis" className="font-bold hover:text-gray-400">
             Phân tích đánh giá
-          </a>
+          </a> */}
           <a href="/directory" className="font-bold hover:text-gray-400">
             Danh bạ
           </a>
@@ -52,13 +53,13 @@ function Header() {
           <input
             type="text"
             placeholder="Tìm kiếm đất bất động sản..."
-            className="h-10 w-64 rounded-full border border-gray-300 bg-white pl-10 pr-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-10 w-80 rounded-full border border-gray-300 bg-white pl-10 pr text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {/* Icon tìm kiếm */}
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-blue-500" />
         </div>
 
-        <button
+        {/* <button
           onClick={toggleLike}
           className="rounded-full p-2 hover:bg-gray-400"
         >
@@ -76,7 +77,7 @@ function Header() {
               clipRule="evenodd"
             />
           </svg>
-        </button>
+        </button> */}
 
         <div
           className="flex items-center space-x-4"
