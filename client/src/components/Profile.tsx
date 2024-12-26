@@ -22,12 +22,12 @@ function Profile() {
         </div>
         <ul className="space-y-4">
           {/* Tài khoản của tôi */}
-          <li className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200">
+          <li className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black">
             <i className="fas fa-user mr-2"></i>
             Tài khoản của tôi
           </li>
           {/* Bài viết đã lưu */}
-          <li className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200">
+          <li className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black">
             <i className="fas fa-bookmark mr-2"></i>
             Bài viết đã lưu
           </li>
