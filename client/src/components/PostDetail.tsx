@@ -1,4 +1,10 @@
-import { FaBed, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+import {
+  FaBed,
+  FaMapMarkerAlt,
+  FaTimes,
+  FaUser,
+  FaPhoneAlt,
+} from "react-icons/fa";
 
 // interface Coordinates {
 //   lat: number;
@@ -78,25 +84,21 @@ function PostDetail({ post, onClose }: PostDetailProps) {
 
         <div className="mb-2 flex items-center space-x-2">
           <FaMapMarkerAlt className="text-gray-600" />
-          <p className="text-lg font-semibold">Địa chỉ: {post.address}</p>
+          <p className="font-semibold">{post.address}</p>
         </div>
-
-        <div className="flex items-center space-x-4">
-          <img
-            src="https://i.pravatar.cc/40"
-            alt="Avatar"
-            className="h-10 w-10 rounded-full"
-          />
-          <div>
-            {/* <p>{post.contactName}</p> */}
-            <p className="text-sm text-gray-500">{post.phone}</p>
-          </div>
+        <div className="mb-2 flex items-center space-x-2">
+          <FaUser className="text-gray-600" />
+          <p className="font-semibold">Người liên hệ: {post.contactName}</p>
+        </div>
+        <div className="mb-2 flex items-center space-x-2">
+          <FaPhoneAlt className="text-gray-600" />
+          <p className="font-semibold"> {post.phone}</p>
         </div>
 
         {/* Vị trí */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <p className="text-lg font-semibold">Địa chỉ: {post.address}</p>
-        </div>
+        </div> */}
 
         {/* Các nút liên hệ */}
         <div className="flex space-x-4">
