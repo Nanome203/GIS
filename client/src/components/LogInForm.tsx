@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 import supabase from "../utils/supabase";
 import { context } from "../utils/context";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 interface LoginData {
   email: string;
   password: string;
@@ -8,12 +10,10 @@ interface LoginData {
 }
 
 type Event = React.ChangeEvent<HTMLInputElement>;
-interface Props {
-  isLogIn: boolean;
-  setIsLogIn: React.Dispatch<React.SetStateAction<boolean>>;
-}
-function LogInForm({ isLogIn, setIsLogIn }: Props) {
+
+function LogInForm() {
   const contextValue = useContext(context);
+  const navigate = useNavigate();
   if (!contextValue) {
     throw new Error("useContext must be inside a Provider with a value");
   }
@@ -35,6 +35,7 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
   }
 
   async function handleLogIn(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
     e.preventDefault();
     const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
@@ -44,22 +45,19 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
       alert(error.message);
       return;
     }
-    if (formData.remember === true) {
-      localStorage.setItem("session", JSON.stringify(data.session));
+    localStorage.setItem("session", JSON.stringify(data.session));
+    if (formData.remember !== true) {
+      window.addEventListener("beforeunload", () => {
+        localStorage.removeItem("session");
+      });
     }
     setSession(data.session);
+    navigate("/home");
   }
 
   return (
-    <div
-      className={`rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 ${isLogIn ? "animate-in zoom-in" : "hidden"}`}
-    >
-      <form
-        className="flex flex-col items-center justify-center gap-10 p-10"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
+    <div className="rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 animate-in zoom-in">
+      <form className="flex flex-col items-center justify-center gap-10 p-10">
         <h1 className="text-4xl font-bold text-white">Login</h1>
         <div className="relative h-14 w-96">
           <input
@@ -104,9 +102,12 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
               Remember me?
             </label>
           </div>
-          <a href="#" className="font-bold text-white">
+          <Link
+            to={"/authentication/reset-password"}
+            className="font-bold text-white"
+          >
             Forgot Password?
-          </a>
+          </Link>
         </div>
         <button
           className="w-96 rounded-full border-2 border-white bg-white py-2 text-xl font-bold hover:bg-opacity-20 hover:text-white active:bg-opacity-10"
@@ -120,7 +121,7 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
           <button
             type="button"
             className="font-bold"
-            onClick={() => setIsLogIn((prev) => !prev)}
+            onClick={() => navigate("/authentication/signup")}
           >
             Register now
           </button>

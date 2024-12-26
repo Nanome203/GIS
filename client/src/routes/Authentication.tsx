@@ -1,21 +1,38 @@
-import { useState } from "react";
+import { useContext, useEffect } from "react";
 import background from "../assets/background-image.jpg";
-import LogInForm from "../components/LogInForm";
-import SignInForm from "../components/SignUpForm";
+import { context } from "../utils/context";
+import { Outlet, useNavigate } from "react-router-dom";
 
 function Authentication() {
-  const [isLogIn, setIsLogIn] = useState(true);
+  const contextData = useContext(context);
+  if (!contextData) {
+    throw new Error("useContext must be inside a Provider with a value");
+  }
+  const { session } = contextData;
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) {
+      navigate("/home");
+    }
+  }, [session, navigate]);
 
   return (
-    <div
-      className="relative flex h-screen w-screen items-center justify-center bg-cover"
-      style={{
-        backgroundImage: `url(${background})`,
-      }}
-    >
-      <LogInForm isLogIn={isLogIn} setIsLogIn={setIsLogIn} />
-      <SignInForm isLogIn={isLogIn} setIsLogIn={setIsLogIn} />
-    </div>
+    <>
+      {session ? (
+        <></>
+      ) : (
+        <div
+          className="relative flex h-screen w-screen items-center justify-center bg-cover"
+          style={{
+            backgroundImage: `url(${background})`,
+          }}
+        >
+          <Outlet />
+        </div>
+      )}
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import supabase from "../utils/supabase";
+import { useNavigate } from "react-router-dom";
 interface LoginData {
   email: string;
   password: string;
@@ -7,16 +8,14 @@ interface LoginData {
 }
 
 type Event = React.ChangeEvent<HTMLInputElement>;
-interface Props {
-  isLogIn: boolean;
-  setIsLogIn: React.Dispatch<React.SetStateAction<boolean>>;
-}
-function SignInForm({ isLogIn, setIsLogIn }: Props) {
+
+function SignInForm() {
   const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
     confirmPass: "",
   });
+  const navigate = useNavigate();
 
   function handleOnChangeInputText(e: Event) {
     const newFormData = { ...formData, [e.target.id]: e.target.value };
@@ -26,6 +25,7 @@ function SignInForm({ isLogIn, setIsLogIn }: Props) {
   async function handleSignUp(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
+    e.stopPropagation();
     e.preventDefault();
     if (formData.password !== formData.confirmPass) {
       alert("Password and confirm password are not the same");
@@ -43,15 +43,8 @@ function SignInForm({ isLogIn, setIsLogIn }: Props) {
   }
 
   return (
-    <div
-      className={`rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 ${!isLogIn ? "animate-in zoom-in" : "hidden"}`}
-    >
-      <form
-        className="flex flex-col items-center justify-center gap-10 p-10"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
+    <div className="rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 animate-in zoom-in">
+      <form className="flex flex-col items-center justify-center gap-10 p-10">
         <h1 className="text-4xl font-bold text-white">Sign Up</h1>
         <div className="relative h-14 w-96">
           <input
@@ -109,7 +102,7 @@ function SignInForm({ isLogIn, setIsLogIn }: Props) {
           <button
             type="button"
             className="font-bold"
-            onClick={() => setIsLogIn((prev) => !prev)}
+            onClick={() => navigate("/authentication/login")}
           >
             Log In
           </button>

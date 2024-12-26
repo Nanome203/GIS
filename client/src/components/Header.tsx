@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import logo from "../assets/logo.jfif";
 import supabase from "../utils/supabase";
+import { useNavigate } from "react-router-dom";
 // import { Link } from "react-router-dom";
 
 interface User {
@@ -9,12 +10,13 @@ interface User {
   avatar: string;
 }
 
-function Header() {
-  const user: User = {
-    name: "Nguyễn Văn A",
-    avatar: "https://i.pravatar.cc/40",
-  };
+const user: User = {
+  name: "Nguyễn Văn A",
+  avatar: "https://i.pravatar.cc/40",
+};
 
+function Header() {
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
 
   const toggleLike = () => {
@@ -80,6 +82,7 @@ function Header() {
           className="flex items-center space-x-4"
           onClick={() => {
             supabase.auth.signOut();
+            navigate("/authentication");
           }}
         >
           <img
