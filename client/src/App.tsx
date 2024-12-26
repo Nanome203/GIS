@@ -12,6 +12,9 @@ import HouseForRent from "./page/HouseForRent";
 import Directory from "./page/Directory";
 import ResetPassword from "./components/ResetPassword";
 import ChangePassword from "./components/ChangePassword";
+import Profile from "./components/Profile";
+import EditProfile from "./components/EditProfile";
+import SavedPosts from "./components/SavedPosts";
 // import Profile from "./components/Profile";
 
 
@@ -74,7 +77,11 @@ function App() {
             <Route path="house-for-rent" element={<HouseForRent />} />
 
             <Route path="directory" element={<Directory />} />
-            {/* <Route path="profile" element={<Profile />} /> */}
+            <Route path="profile" element={<Profile />} />
+            <Route path="edit-profile" element={<EditProfile />} />
+            <Route path="saved-posts" element={<SavedPosts />} />
+
+
 
           </Route>
         </Routes>

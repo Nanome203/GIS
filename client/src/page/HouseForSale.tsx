@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MapView from "../components/MapView";
-// import { FaSearch } from "react-icons/fa";
 import PostDetail from "../components/PostDetail";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaHeart } from "react-icons/fa"; // Import FaHeart
 import supabase from "../utils/supabase";
 
 interface DatData {
@@ -25,28 +24,48 @@ function HouseForSale() {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null);
   const [fetchedData, setFetchedData] = useState<DatData[]>([]);
+
   const selectedPost = fetchedData.find((post) => post.id === selectedPostId);
   const coordinates =
     selectedPost?.lat && selectedPost?.lng
       ? { lat: selectedPost.lat, lng: selectedPost.lng }
       : null;
+
   function handlePostClick(postId: string) {
     setSelectedPostId(postId);
   }
 
-  // function handleClosePostDetail() {
-  //   setSelectedPostId(null); // Đóng detail
-  // }
+  async function handleSavePost(post: DatData) {
+    try {
+      const { error } = await supabase
+        .from("saved_posts") // Bảng chứa bài viết đã lưu
+        .insert({
+          postId: post.id,
+          title: post.title,
+          imageUrl: post.imageUrl,
+          description: post.description,
+          contactName: post.contactName,
+          phone: post.phone,
+          address: post.address,
+          price: post.price,
+        });
 
-  // const selectedPost = selectedPostId
-  //   ? fetchedData.find((post) => post.id === selectedPostId)
-  //   : null;
+      if (error) {
+        console.error("Error saving post:", error);
+        alert("Lưu bài viết thất bại!");
+      } else {
+        alert("Lưu bài viết thành công!");
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
+  }
 
   useEffect(() => {
     async function fetchData() {
       const { data, error } = await supabase.from("dat_ban").select("*");
       if (error) {
-        console.log("error", error);
+        console.log("Error fetching data:", error);
       } else {
         setFetchedData(data);
       }
@@ -55,27 +74,24 @@ function HouseForSale() {
   }, []);
 
   return (
-    <div
-      className="relative flex h-full w-full gap-2 p-4"
-      // onClick={handleClosePostDetail}
-    >
-      {/* Bài đăng (1/4) */}
+    <div className="relative flex h-full w-full gap-2 p-4">
+      {/* Bài đăng */}
       <div className="scrollbar-thin basis-1/3 overflow-y-scroll px-10">
         {fetchedData.map((post) => (
           <div
             key={post.id}
-            onMouseEnter={() => setHoveredPostId(post.id)} // Đánh dấu khi hover
-            onMouseLeave={() => setHoveredPostId(null)} // Xóa hover khi rời chuột
+            onMouseEnter={() => setHoveredPostId(post.id)}
+            onMouseLeave={() => setHoveredPostId(null)}
             onClick={(e) => {
-              e.stopPropagation(); // Ngăn chặn sự kiện click lan ra container
+              e.stopPropagation();
               handlePostClick(post.id);
             }}
             className={`post-item mb-4 cursor-pointer border-b pb-4 transition last:border-none ${
               selectedPostId === post.id
-                ? "bg-blue-100" // Màu khi được chọn
+                ? "bg-blue-100"
                 : hoveredPostId === post.id
-                  ? "bg-gray-100" // Màu khi hover
-                  : "bg-white" // Màu mặc định
+                ? "bg-gray-100"
+                : "bg-white"
             }`}
           >
             <img
@@ -98,21 +114,34 @@ function HouseForSale() {
                     <p className="text-sm text-gray-500">SĐT: {post.phone}</p>
                   </div>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
-                    handlePostClick(post.id);
-                  }}
-                  className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
-                >
-                  <FaSearch className="text-xl" />
-                </button>
+                <div className="flex space-x-2">
+                  {/* Nút Tìm kiếm */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePostClick(post.id);
+                    }}
+                    className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
+                  >
+                    <FaSearch className="text-xl" />
+                  </button>
+                  {/* Nút Lưu */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSavePost(post);
+                    }}
+                    className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+                  >
+                    <FaHeart className="text-xl" /> {/* Đổi thành trái tim */}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-      {/* Mapbox (chiếm 3/4) */}
+      {/* Mapbox */}
       <MapView selectedCoordinates={coordinates} />
       {selectedPost && (
         <PostDetail
@@ -124,4 +153,4 @@ function HouseForSale() {
   );
 }
 
-export default HouseForSale
+export default HouseForSale;

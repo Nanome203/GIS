@@ -26,7 +26,7 @@ function Header() {
   };
 
   const goToProfile = () => {
-    navigate("/profile");
+    navigate("profile");
   };
 
   // Đóng menu khi nhấn ngoài

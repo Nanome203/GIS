@@ -5,7 +5,7 @@ function Profile() {
   const navigate = useNavigate();
 
   const goToEditPage = () => {
-    navigate("/edit-profile"); // Chuyển sang trang chỉnh sửa
+    navigate("/home/edit-profile"); // Chuyển sang trang chỉnh sửa
   };
 
   return (
@@ -27,7 +27,9 @@ function Profile() {
             Tài khoản của tôi
           </li>
           {/* Bài viết đã lưu */}
-          <li className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black">
+          <li 
+          className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black"
+          onClick={() => navigate("/home/saved-posts")}>
             <i className="fas fa-bookmark mr-2"></i>
             Bài viết đã lưu
           </li>

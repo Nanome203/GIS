@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { useContext, useEffect } from "react";
 import { context } from "../utils/context";
 // import Profile from "../components/Profile";
-import EditProfile from "../components/EditProfile";
+// import EditProfile from "../components/EditProfile";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -24,7 +24,6 @@ function MainPage() {
         <div className="flex h-screen flex-col">
           <Header />
           <Outlet />
-          {/* <Profile /> */}
           <Footer />
         </div>
       ) : (

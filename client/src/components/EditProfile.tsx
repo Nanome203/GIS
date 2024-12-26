@@ -25,11 +25,42 @@ function EditProfile() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     alert("Thông tin đã được lưu thành công!");
-    navigate("/profile"); // Quay lại trang hồ sơ cá nhân
+    navigate("/home/profile"); // Quay lại trang hồ sơ cá nhân
   };
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className="w-1/4 bg-white p-6 shadow-md">
+        <div className="mb-8 text-center">
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="User Avatar"
+            className="mx-auto mb-4 h-24 w-24 rounded-full"
+          />
+          <p className="text-lg font-semibold text-gray-800">Trang Phan</p>
+        </div>
+        <ul className="space-y-4">
+          {/* Tài khoản của tôi */}
+          <li
+            className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black"
+            onClick={() => navigate("/home/profile")}
+          >
+            <i className="fas fa-user mr-2"></i>
+            Tài khoản của tôi
+          </li>
+          {/* Bài viết đã lưu */}
+          <li
+            className="cursor-pointer rounded-lg bg-gray-100 p-3 text-gray-700 hover:bg-gray-200 hover:text-black"
+            onClick={() => navigate("/home/saved-posts")}
+          >
+            <i className="fas fa-bookmark mr-2"></i>
+            Bài viết đã lưu
+          </li>
+        </ul>
+      </aside>
+
+      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-xl bg-white p-6 shadow-md rounded-lg">
           <h2 className="mb-6 text-2xl font-semibold text-gray-800 text-center">
