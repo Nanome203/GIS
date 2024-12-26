@@ -17,7 +17,7 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
   if (!contextValue) {
     throw new Error("useContext must be inside a Provider with a value");
   }
-  const { setIsLoggedIn } = contextValue;
+  const { setSession } = contextValue;
   const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
@@ -36,15 +36,18 @@ function LogInForm({ isLogIn, setIsLogIn }: Props) {
 
   async function handleLogIn(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
     if (error) {
-      console.error(error);
+      alert(error.message);
+      return;
     }
-    setIsLoggedIn(true);
-    console.log("test");
+    if (formData.remember === true) {
+      localStorage.setItem("session", JSON.stringify(data.session));
+    }
+    setSession(data.session);
   }
 
   return (

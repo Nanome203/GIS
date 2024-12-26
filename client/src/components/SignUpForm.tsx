@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import supabase from "../utils/supabase";
 interface LoginData {
   email: string;
-  displayName: string;
   password: string;
   confirmPass: string;
 }
@@ -15,7 +14,6 @@ interface Props {
 function SignInForm({ isLogIn, setIsLogIn }: Props) {
   const [formData, setFormData] = useState<LoginData>({
     email: "",
-    displayName: "",
     password: "",
     confirmPass: "",
   });
@@ -33,16 +31,15 @@ function SignInForm({ isLogIn, setIsLogIn }: Props) {
       alert("Password and confirm password are not the same");
       return;
     }
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
-      options: { data: { display_name: formData.displayName } },
     });
     if (error) {
       alert(error.message);
       return;
     }
-    console.log(data);
+    alert("Check your email for confirmation link");
   }
 
   return (
@@ -69,21 +66,6 @@ function SignInForm({ isLogIn, setIsLogIn }: Props) {
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${formData.email === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
             Email
-          </label>
-        </div>
-        <div className="relative h-14 w-96">
-          <input
-            type="text"
-            name="text"
-            id="displayName"
-            className="peer size-full rounded-full border-2 border-b-2 border-white bg-transparent p-5 text-white outline-none"
-            onChange={handleOnChangeInputText}
-          />
-          <label
-            htmlFor="displayName"
-            className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${formData.email === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
-          >
-            Display Name
           </label>
         </div>
         <div className="relative h-14 w-96">

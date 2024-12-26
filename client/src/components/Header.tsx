@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import logo from "../assets/logo.jfif"
+import logo from "../assets/logo.jfif";
+import supabase from "../utils/supabase";
 // import { Link } from "react-router-dom";
 
 interface User {
@@ -11,7 +12,7 @@ interface User {
 function Header() {
   const user: User = {
     name: "Nguyễn Văn A",
-    avatar: "https://i.pravatar.cc/40", 
+    avatar: "https://i.pravatar.cc/40",
   };
 
   const [isLiked, setIsLiked] = useState(false);
@@ -21,36 +22,44 @@ function Header() {
   };
 
   return (
-    <header className="bg-gray-800 text-white flex justify-between items-center px-6 py-4 fixed top-0 left-0 w-full z-10">
-   
+    <header className="fixed left-0 top-0 z-10 flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
       <div className="flex items-center space-x-6">
-        <img 
-          src={logo} 
+        <img
+          src={logo}
           alt="Logo"
-          className="w-16 aspect-square rounded-full object-fill" 
+          className="aspect-square w-16 rounded-full object-fill"
         />
         <nav className="flex space-x-6">
-          <a href="/" className="hover:text-gray-400 font-bold">Đất bán</a>
-          <a href="/house-for-rent" className="hover:text-gray-400 font-bold">Đất cho thuê</a>
-          <a href="/analysis" className="hover:text-gray-400 font-bold">Phân tích đánh giá</a>
-          <a href="/directory" className="hover:text-gray-400 font-bold">Danh bạ</a>
+          <a href="/" className="font-bold hover:text-gray-400">
+            Đất bán
+          </a>
+          <a href="/house-for-rent" className="font-bold hover:text-gray-400">
+            Đất cho thuê
+          </a>
+          <a href="/analysis" className="font-bold hover:text-gray-400">
+            Phân tích đánh giá
+          </a>
+          <a href="/directory" className="font-bold hover:text-gray-400">
+            Danh bạ
+          </a>
         </nav>
       </div>
 
       <div className="flex items-center space-x-2">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Tìm kiếm đất bất động sản..."
+            className="h-10 w-64 rounded-full border border-gray-300 bg-white pl-10 pr-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {/* Icon tìm kiếm */}
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-blue-500" />
+        </div>
 
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Tìm kiếm đất bất động sản..."
-          className="w-64 h-10 pl-10 pr-4 rounded-full border border-gray-300 bg-white text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-        {/* Icon tìm kiếm */}
-        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500" />
-      </div>
-
-      
-      <button onClick={toggleLike} className="p-2 rounded-full hover:bg-gray-400">
+        <button
+          onClick={toggleLike}
+          className="rounded-full p-2 hover:bg-gray-400"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill={isLiked ? "red" : "none"}
@@ -67,18 +76,19 @@ function Header() {
           </svg>
         </button>
 
-
-      <div className="flex items-center space-x-4">
-        <img
-          src={user.avatar}
-          alt="Avatar"
-          className="h-8 w-8 rounded-full border-2 border-white"
-        />
-        <span className="text-sm font-bold">{user.name}</span>
-
-
-      </div>
-              
+        <div
+          className="flex items-center space-x-4"
+          onClick={() => {
+            supabase.auth.signOut();
+          }}
+        >
+          <img
+            src={user.avatar}
+            alt="Avatar"
+            className="h-8 w-8 rounded-full border-2 border-white"
+          />
+          <span className="text-sm font-bold">{user.name}</span>
+        </div>
       </div>
     </header>
   );
