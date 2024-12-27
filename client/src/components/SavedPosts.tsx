@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
+import { context } from "../utils/context";
 
 interface SavedPost {
   id: string;
@@ -20,6 +21,13 @@ interface SavedPost {
 
 function SavedPosts() {
   const [savedPosts, setSavedPosts] = useState<SavedPost[]>([]);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const contextData = useContext(context);
+  if (!contextData) {
+    throw new Error("useContext must be inside a Provider with a value");
+  }
+  const { id, setFullReRender, fullReRender } = contextData;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +40,61 @@ function SavedPosts() {
       }
     }
     fetchSavedPosts();
+  }, [fullReRender]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await supabase
+        .from("profile")
+        .select("name, display_name, phone, address, birthday, avatar")
+        .eq("id", id);
+      if (response.error) {
+        console.error("Error fetching user:", response.error.message);
+        return null;
+      }
+      setAvatar(response.data[0].avatar);
+      setDisplayName(response.data[0].display_name);
+    }
+    fetchData();
   }, []);
+
+  async function uploadAvatar(file: File) {
+    const fileName = `${id}/${Date.now()}_${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, file);
+    if (error) {
+      console.error("Error uploading avatar:", error.message);
+      return null;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("avatars").getPublicUrl(data.path);
+    const { error: updateError } = await supabase
+      .from("profile") // Adjust this table name as per your schema
+      .update({ avatar: publicUrl })
+      .eq("id", id);
+    if (updateError) throw updateError;
+
+    setFullReRender((prev) => !prev);
+    alert("Avatar updated successfully!");
+  }
+
+  const handleChangeAvatar = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".jpg, .png, .jpeg";
+    input.addEventListener("change", async () => {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        await uploadAvatar(file);
+      } else {
+        console.log("No file selected");
+      }
+    });
+    input.click();
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -40,11 +102,12 @@ function SavedPosts() {
       <aside className="w-1/4 bg-white p-6 shadow-md">
         <div className="mb-8 text-center">
           <img
-            src="https://i.pravatar.cc/100"
+            src={avatar ? avatar : "https://i.pravatar.cc/100"}
             alt="User Avatar"
-            className="mx-auto mb-4 h-24 w-24 rounded-full"
+            className="mx-auto mb-4 h-24 w-24 cursor-pointer rounded-full"
+            onClick={handleChangeAvatar}
           />
-          <p className="text-lg font-semibold text-gray-800">Trang Phan</p>
+          <p className="text-lg font-semibold text-gray-800">{displayName}</p>
         </div>
         <ul className="space-y-4">
           {/* Tài khoản của tôi */}
@@ -65,7 +128,9 @@ function SavedPosts() {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <h2 className="mb-6 text-2xl font-bold text-gray-800">Bài Viết Đã Lưu</h2>
+        <h2 className="mb-6 text-2xl font-bold text-gray-800">
+          Bài Viết Đã Lưu
+        </h2>
 
         {/* Kiểm tra trạng thái bài viết đã lưu */}
         {savedPosts.length === 0 ? (
@@ -88,9 +153,7 @@ function SavedPosts() {
                   className="mb-4 h-40 w-full rounded object-cover"
                 />
                 <h3 className="mb-2 text-lg font-semibold">{post.title}</h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  {post.description}
-                </p>
+                <p className="mb-2 text-sm text-gray-600">{post.description}</p>
                 <div className="text-sm text-gray-700">
                   <p>
                     <strong>Liên hệ:</strong> {post.contactName} ({post.phone})

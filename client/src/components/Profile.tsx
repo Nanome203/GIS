@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../utils/supabase";
+import { context } from "../utils/context";
 
 type ProfileData = {
   name: string | null;
@@ -8,32 +9,28 @@ type ProfileData = {
   phone: string | null;
   address: string | null;
   birthday: string | null;
+  avatar: string | null;
 } | null;
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState<ProfileData>(null);
   const [editData, setEditData] = useState<ProfileData>(null);
-  const [id, setId] = useState<string | undefined>("");
   const [reRender, setReRender] = useState(false); // use this as a trigger to re-fetch data
+  const navigate = useNavigate();
+
+  const contextData = useContext(context);
+  if (!contextData) {
+    throw new Error("useContext must be inside a Provider with a value");
+  }
+  const { id, fullReRender, setFullReRender } = contextData;
 
   useEffect(() => {
     async function fetchData() {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-      if (error) {
-        console.error("Error fetching user:", error.message);
-        return null;
-      }
-      setId(user?.id);
       const response = await supabase
         .from("profile")
-        .select("name, display_name, phone, address, birthday")
-        .eq("id", user?.id);
+        .select("name, display_name, phone, address, birthday, avatar")
+        .eq("id", id);
       if (response.error) {
         console.error("Error fetching user:", response.error.message);
         return null;
@@ -42,7 +39,7 @@ function Profile() {
       setEditData(response.data[0]);
     }
     fetchData();
-  }, [reRender]);
+  }, [reRender, fullReRender]);
 
   // Xử lý thay đổi trong form
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +48,44 @@ function Profile() {
       [e.target.id]: e.target.value,
     } as ProfileData;
     setEditData(newData);
+  };
+
+  async function uploadAvatar(file: File) {
+    const fileName = `${id}/${Date.now()}_${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, file);
+    if (error) {
+      console.error("Error uploading avatar:", error.message);
+      return null;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("avatars").getPublicUrl(data.path);
+    const { error: updateError } = await supabase
+      .from("profile") // Adjust this table name as per your schema
+      .update({ avatar: publicUrl })
+      .eq("id", id);
+    if (updateError) throw updateError;
+
+    setFullReRender((prev) => !prev);
+    alert("Avatar updated successfully!");
+  }
+
+  const handleChangeAvatar = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".jpg, .png, .jpeg";
+    input.addEventListener("change", async () => {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        await uploadAvatar(file);
+      } else {
+        console.log("No file selected");
+      }
+    });
+    input.click();
   };
 
   // Xử lý khi nhấn nút Lưu
@@ -91,9 +126,12 @@ function Profile() {
       <aside className="w-1/4 bg-white p-6 shadow-md">
         <div className="mb-8 text-center">
           <img
-            src="https://i.pravatar.cc/100"
+            src={
+              formData?.avatar ? formData.avatar : "https://i.pravatar.cc/100"
+            }
             alt="User Avatar"
-            className="mx-auto mb-4 h-24 w-24 rounded-full"
+            className="mx-auto mb-4 h-24 w-24 cursor-pointer rounded-full"
+            onClick={handleChangeAvatar}
           />
           <p className="text-lg font-semibold text-gray-800">
             {formData?.display_name}

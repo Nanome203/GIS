@@ -20,6 +20,8 @@ function App() {
   const [session, setSession] = useState<Session | null>(
     JSON.parse(localStorage.getItem("session") || "null"),
   );
+  const [id, setId] = useState<string | undefined>("");
+  const [fullReRender, setFullReRender] = useState(false);
 
   useEffect(() => {
     //refresh tokens
@@ -34,6 +36,14 @@ function App() {
             console.error(error);
           }
         });
+
+      supabase.auth.getUser().then(({ data: { user }, error }) => {
+        if (error) {
+          console.error("Error fetching user:", error.message);
+          return null;
+        }
+        setId(user?.id);
+      });
     }
   }, []);
   useEffect(() => {
@@ -51,7 +61,9 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
   return (
-    <context.Provider value={{ session, setSession }}>
+    <context.Provider
+      value={{ session, setSession, id, setId, fullReRender, setFullReRender }}
+    >
       <BrowserRouter>
         <Routes>
           <Route
