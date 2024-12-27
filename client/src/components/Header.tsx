@@ -50,7 +50,7 @@ function Header() {
         }
         setAvatar(data[0].avatar);
       });
-  }, [fullReRender]);
+  }, [fullReRender, id]);
 
   return (
     <header className="sticky top-0 z-[100] flex w-full items-center justify-between bg-gray-800 px-6 py-4 text-white">
@@ -89,7 +89,7 @@ function Header() {
           ref={menuRef} // Gắn ref vào container menu
         >
           <img
-            src={avatar ? avatar : "https://i.pravatar.cc/40"}
+            src={avatar ?? ""}
             alt="Avatar"
             className="aspect-square w-14 rounded-full border-2 border-white"
           />

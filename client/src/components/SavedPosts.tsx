@@ -56,7 +56,7 @@ function SavedPosts() {
       setDisplayName(response.data[0].display_name);
     }
     fetchData();
-  }, []);
+  }, [id]);
 
   async function uploadAvatar(file: File) {
     const fileName = `${id}/${Date.now()}_${file.name}`;
@@ -102,7 +102,7 @@ function SavedPosts() {
       <aside className="w-1/4 bg-white p-6 shadow-md">
         <div className="mb-8 text-center">
           <img
-            src={avatar ? avatar : "https://i.pravatar.cc/100"}
+            src={avatar ?? ""}
             alt="User Avatar"
             className="mx-auto mb-4 h-24 w-24 cursor-pointer rounded-full"
             onClick={handleChangeAvatar}

@@ -36,15 +36,14 @@ function App() {
             console.error(error);
           }
         });
-
-      supabase.auth.getUser().then(({ data: { user }, error }) => {
-        if (error) {
-          console.error("Error fetching user:", error.message);
-          return null;
-        }
-        setId(user?.id);
-      });
     }
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+      if (error) {
+        console.error("Error fetching user:", error.message);
+        return null;
+      }
+      setId(user?.id);
+    });
   }, []);
   useEffect(() => {
     const {

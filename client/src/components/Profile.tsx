@@ -39,7 +39,7 @@ function Profile() {
       setEditData(response.data[0]);
     }
     fetchData();
-  }, [reRender, fullReRender]);
+  }, [reRender, fullReRender, id]);
 
   // Xử lý thay đổi trong form
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,9 +126,7 @@ function Profile() {
       <aside className="w-1/4 bg-white p-6 shadow-md">
         <div className="mb-8 text-center">
           <img
-            src={
-              formData?.avatar ? formData.avatar : "https://i.pravatar.cc/100"
-            }
+            src={formData?.avatar ?? ""}
             alt="User Avatar"
             className="mx-auto mb-4 h-24 w-24 cursor-pointer rounded-full"
             onClick={handleChangeAvatar}
