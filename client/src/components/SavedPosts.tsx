@@ -27,36 +27,8 @@ function SavedPosts() {
   if (!contextData) {
     throw new Error("useContext must be inside a Provider with a value");
   }
-  const { id, setFullReRender, fullReRender } = contextData;
+  const { id, setFullReRender } = contextData;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    async function fetchSavedPosts() {
-      const { data, error } = await supabase.from("saved_posts").select("*");
-      if (error) {
-        console.error("Error fetching saved posts:", error);
-      } else {
-        setSavedPosts(data || []);
-      }
-    }
-    fetchSavedPosts();
-  }, [fullReRender]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await supabase
-        .from("profile")
-        .select("name, display_name, phone, address, birthday, avatar")
-        .eq("id", id);
-      if (response.error) {
-        console.error("Error fetching user:", response.error.message);
-        return null;
-      }
-      setAvatar(response.data[0].avatar);
-      setDisplayName(response.data[0].display_name);
-    }
-    fetchData();
-  }, [id]);
 
   async function uploadAvatar(file: File) {
     const fileName = `${id}/${Date.now()}_${file.name}`;
@@ -95,6 +67,48 @@ function SavedPosts() {
     });
     input.click();
   };
+
+  async function fetchData() {
+    const response = await supabase
+      .from("profile")
+      .select("display_name, avatar")
+      .eq("id", id);
+    if (response.error) {
+      console.error("Error fetching user:", response.error.message);
+      return null;
+    }
+    setAvatar(response.data[0].avatar);
+    setDisplayName(response.data[0].display_name);
+  }
+
+  async function fetchSavedPost() {
+    const savedPostsTemp: SavedPost[] = [];
+    const { data: datBanData, error: datBanError } = await supabase
+      .from("save_dat_ban")
+      .select("dat_ban(*)")
+      .eq("profile_id", id);
+    if (datBanError) {
+      console.error(datBanError.message);
+      return;
+    }
+    const { data: datThueData, error: datThueError } = await supabase
+      .from("save_dat_thue")
+      .select("dat_thue(*)")
+      .eq("profile_id", id);
+    if (datThueError) {
+      console.error(datThueError.message);
+      return;
+    }
+    // console.log(datBanData[0]);
+    // console.log(datThueData[0]);
+    datBanData.forEach(({ dat_ban }) => savedPostsTemp.push(dat_ban)); //ignore the error, this code works
+    datThueData.forEach(({ dat_thue }) => savedPostsTemp.push(dat_thue)); //ignore the error, this code works
+    setSavedPosts(savedPostsTemp);
+  }
+  useEffect(() => {
+    fetchData();
+    fetchSavedPost();
+  }, [id]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -141,7 +155,7 @@ function SavedPosts() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {savedPosts.map((post) => (
               <div
                 key={post.id}

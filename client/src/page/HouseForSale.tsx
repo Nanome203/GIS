@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MapView from "../components/MapView";
 import PostDetail from "../components/PostDetail";
-import { FaBookmark } from "react-icons/fa"; // Import FaHeart
+import { FaBookmark, FaRegBookmark } from "react-icons/fa"; // Import FaHeart
 import supabase from "../utils/supabase";
+import { context } from "../utils/context";
 
 interface DatData {
   id: string;
@@ -29,6 +30,7 @@ function HouseForSale() {
     lng: number;
   } | null>(null);
   const [mapRef, setMapRef] = useState<mapboxgl.Map | null>(null);
+  const [savedDatBan, setSavedDatBan] = useState<string[]>([]);
 
   const selectedPost = fetchedData.find((post) => post.id === selectedPostId);
   const coordinates =
@@ -36,47 +38,70 @@ function HouseForSale() {
       ? { lat: selectedPost.lat, lng: selectedPost.lng }
       : null;
 
+  const contextData = useContext(context);
+  if (!contextData) {
+    return;
+  }
+  const { id: userId } = contextData;
+
   function handlePostClick(postId: string) {
     setSelectedPostId(postId);
   }
 
-  async function handleSavePost(post: DatData) {
-    try {
-      const { error } = await supabase
-        .from("saved_posts") // Bảng chứa bài viết đã lưu
-        .insert({
-          postId: post.id,
-          title: post.title,
-          imageUrl: post.imageUrl,
-          description: post.description,
-          contactName: post.contactName,
-          phone: post.phone,
-          address: post.address,
-          price: post.price,
-        });
+  async function handleUnSavePost(id: string) {
+    const { error } = await supabase
+      .from("save_dat_ban")
+      .delete()
+      .eq("dat_ban_id", id);
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    fetchData();
+    fetchSavedDatBan();
+  }
+  async function handleSavePost(id: string) {
+    const { error } = await supabase
+      .from("save_dat_ban")
+      .insert([{ profile_id: userId, dat_ban_id: id }]);
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    fetchData();
+    fetchSavedDatBan();
+  }
 
-      if (error) {
-        console.error("Error saving post:", error);
-        alert("Lưu bài viết thất bại!");
-      } else {
-        alert("Lưu bài viết thành công!");
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
+  // fetch all dat_ban data
+  async function fetchData() {
+    const { data, error } = await supabase.from("dat_ban").select("*");
+    if (error) {
+      console.log("Error fetching data:", error);
+    } else {
+      setFetchedData(data);
     }
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, error } = await supabase.from("dat_ban").select("*");
-      if (error) {
-        console.log("Error fetching data:", error);
-      } else {
-        setFetchedData(data);
-      }
+  async function fetchSavedDatBan() {
+    const { data, error } = await supabase
+      .from("save_dat_ban")
+      .select("dat_ban_id")
+      .eq("profile_id", userId);
+    if (error) {
+      console.error(error.message);
+      return;
     }
+    const dummySavedDatBanArray: string[] = [];
+    data.forEach((element) => {
+      dummySavedDatBanArray.push(element.dat_ban_id);
+    });
+    setSavedDatBan(dummySavedDatBanArray);
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
     fetchData();
-  }, []);
+    fetchSavedDatBan();
+  }, [userId]);
 
   return (
     <div className="relative flex h-full w-full gap-2 p-4">
@@ -120,26 +145,23 @@ function HouseForSale() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  {/* Nút Tìm kiếm */}
-                  {/* <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePostClick(post.id);
-                    }}
-                    className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"
-                  >
-                    <FaSearch className="text-xl" />
-                  </button> */}
                   {/* Nút Lưu */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSavePost(post);
+                      if (savedDatBan.includes(post.id)) {
+                        handleUnSavePost(post.id);
+                        return;
+                      }
+                      handleSavePost(post.id);
                     }}
-                    className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+                    className="rounded-full p-2 hover:bg-gray-300"
                   >
-                    <FaBookmark className="text-xl" />{" "}
-                    {/* Đổi thành trái tim */}
+                    {savedDatBan.includes(post.id) ? (
+                      <FaBookmark className="text-xl" />
+                    ) : (
+                      <FaRegBookmark className="text-xl" />
+                    )}
                   </button>
                 </div>
               </div>
