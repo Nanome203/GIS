@@ -22,7 +22,7 @@ function ChangePassword() {
     e.stopPropagation();
     e.preventDefault();
     if (passwordData.pass !== passwordData.confirmPass) {
-      alert("Password and confirm password are not the same");
+      alert("Mật khẩu không giống nhau");
       return;
     }
     const { error } = await supabase.auth.updateUser({
@@ -32,13 +32,13 @@ function ChangePassword() {
       alert(error.message);
       return;
     }
-    alert("Password has been updated");
+    alert("Mật khẩu đã được đặt lại");
     navigate("/authentication");
   }
   return (
     <div className="rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 animate-in zoom-in">
       <form className="flex flex-col items-center justify-center gap-10 p-10">
-        <h1 className="text-4xl font-bold text-white">Reset Password</h1>
+        <h1 className="text-4xl font-bold text-white">Đặt lại mật khẩu</h1>
         <div className="relative h-14 w-96">
           <input
             type="password"
@@ -51,7 +51,7 @@ function ChangePassword() {
             htmlFor="pass"
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${passwordData.pass === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
-            New password
+            Mật khẩu mới
           </label>
         </div>
         <div className="relative h-14 w-96">
@@ -66,7 +66,7 @@ function ChangePassword() {
             htmlFor="confirmPass"
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${passwordData.confirmPass === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
-            Confirm new password
+            Nhập lại mật khẩu mới
           </label>
         </div>
         <button
@@ -74,7 +74,7 @@ function ChangePassword() {
           type="submit"
           onClick={handleResetPassword}
         >
-          Update
+          Cập nhật
         </button>
       </form>
     </div>

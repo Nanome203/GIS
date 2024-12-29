@@ -58,7 +58,7 @@ function LogInForm() {
   return (
     <div className="rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 animate-in zoom-in">
       <form className="flex flex-col items-center justify-center gap-10 p-10">
-        <h1 className="text-4xl font-bold text-white">Login</h1>
+        <h1 className="text-4xl font-bold text-white">Đăng nhập</h1>
         <div className="relative h-14 w-96">
           <input
             type="email"
@@ -86,7 +86,7 @@ function LogInForm() {
             htmlFor="password"
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${formData.password === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
-            Password
+            Mật khẩu
           </label>
         </div>
         <div className="flex h-10 w-96 items-center justify-between">
@@ -99,14 +99,14 @@ function LogInForm() {
               onChange={handleOnChangeInputCheckBox}
             />
             <label htmlFor="remember" className="cursor-pointer">
-              Remember me?
+              Duy trì đăng nhập
             </label>
           </div>
           <Link
             to={"/authentication/reset-password"}
             className="font-bold text-white"
           >
-            Forgot Password?
+            Quên mật khẩu?
           </Link>
         </div>
         <button
@@ -114,16 +114,16 @@ function LogInForm() {
           type="submit"
           onClick={handleLogIn}
         >
-          Log In
+          Đăng nhập
         </button>
         <div className="text-white">
-          Don&apos;t have an account?{" "}
+          Không có tài khoản?{" "}
           <button
             type="button"
             className="font-bold"
             onClick={() => navigate("/authentication/signup")}
           >
-            Register now
+            Đăng ký ngay
           </button>
         </div>
       </form>

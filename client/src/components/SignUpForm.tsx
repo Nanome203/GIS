@@ -28,7 +28,7 @@ function SignInForm() {
     e.stopPropagation();
     e.preventDefault();
     if (formData.password !== formData.confirmPass) {
-      alert("Password and confirm password are not the same");
+      alert("Mật khẩu không giống nhau");
       return;
     }
     const { error } = await supabase.auth.signUp({
@@ -39,13 +39,13 @@ function SignInForm() {
       alert(error.message);
       return;
     }
-    alert("Check your email for confirmation link");
+    alert("Vui lòng kiểm tra email để lấy link xác nhận");
   }
 
   return (
     <div className="rounded-3xl border-2 border-white text-center backdrop-blur-md duration-700 animate-in zoom-in">
       <form className="flex flex-col items-center justify-center gap-10 p-10">
-        <h1 className="text-4xl font-bold text-white">Sign Up</h1>
+        <h1 className="text-4xl font-bold text-white">Đăng ký</h1>
         <div className="relative h-14 w-96">
           <input
             type="email"
@@ -73,7 +73,7 @@ function SignInForm() {
             htmlFor="password"
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${formData.password === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
-            Password
+            Mật khẩu
           </label>
         </div>
         <div className="relative h-14 w-96">
@@ -87,7 +87,7 @@ function SignInForm() {
             htmlFor="confirmPass"
             className={`absolute left-4 -translate-y-1/2 text-lg transition-all duration-300 ${formData.confirmPass === "" ? "top-1/2 text-white" : "text-md -top-0 rounded-full bg-white px-2 font-bold text-black"} peer-focus:text-md peer-focus:-top-0 peer-focus:rounded-full peer-focus:bg-white peer-focus:px-2 peer-focus:font-bold peer-focus:text-black`}
           >
-            Confirm password
+            Nhập lại mật khẩu
           </label>
         </div>
         <button
@@ -95,16 +95,16 @@ function SignInForm() {
           type="submit"
           onClick={handleSignUp}
         >
-          Sign Up
+          Đăng ký
         </button>
         <div className="text-white">
-          Already have an account?{" "}
+          Đã có tài khoản?{" "}
           <button
             type="button"
             className="font-bold"
             onClick={() => navigate("/authentication/login")}
           >
-            Log In
+            Đăng nhập
           </button>
         </div>
       </form>
